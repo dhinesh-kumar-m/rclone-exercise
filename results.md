@@ -93,3 +93,24 @@ credentials. Bad arguments and bad credentials both correctly print an
 error and exit 1 without leaving anything half-done. The script sets
 `RCLONE_CONFIG=/dev/null` itself, so it won't pick up a stray config
 file even if one exists on the machine running it.
+
+## Demonstration questions
+
+1. **`rclone copy` run twice, same source/destination?** Nothing the
+   second time — it checks and skips files that already match.
+2. **File exists at destination but not source, then `sync` runs?**
+   Gets deleted. `copy` never deletes; `sync` does.
+3. **How does rclone decide a file needs transferring?** Size and
+   modified time by default, checksum where the backend supports it.
+4. **Can rclone transfer directly between two S3 providers?** Yes,
+   when both support server-side copy (seen as "Copied (server-side
+   copy)" in the logs). Falls back to download+upload otherwise.
+5. **Network drops halfway through a 1GB upload?** No partial object
+   ends up in the bucket, but that file restarts from 0 on retry —
+   files that already finished are left alone.
+6. **Running rclone from a Celery worker without rclone.conf?** Inject
+   `RCLONE_S3_*` env vars into the worker's environment through
+   whatever secrets manager is already in use, set
+   `RCLONE_CONFIG=/dev/null`, and call rclone via `subprocess`. No
+   config file touches disk and credentials never show up in the
+   command line.

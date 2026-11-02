@@ -23,3 +23,23 @@ rclone --version
 No `rclone.conf` is used anywhere in this repo — credentials and endpoint
 are passed via environment variables or CLI flags. See `commands.md` for
 the exact approach.
+
+## Files
+
+- `commands.md` — rclone commands used, grouped by topic
+- `results.md` — what happened when running them, answers to the exercise questions
+- `transfer.sh` — reusable copy/sync script
+- `docker-compose.yml` — MinIO setup
+
+## Running transfer.sh
+
+```bash
+export RCLONE_S3_PROVIDER=Minio
+export RCLONE_S3_ENV_AUTH=false
+export RCLONE_S3_ACCESS_KEY_ID=minioadmin
+export RCLONE_S3_SECRET_ACCESS_KEY=minioadmin123
+export RCLONE_S3_ENDPOINT=http://localhost:9000
+
+./transfer.sh copy ./source-dir ./dest-dir
+./transfer.sh sync ./source-dir :s3:testpress-bucket
+```
