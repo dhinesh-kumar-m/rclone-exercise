@@ -84,3 +84,12 @@ short version is `sync` deletes, `copy` doesn't. The risk is direction:
 `rclone sync A B` makes B match A, so swapping the arguments by
 mistake deletes things from the copy you meant to keep. Always
 `--dry-run` a sync before running it for real.
+
+## Automation
+
+Tested `transfer.sh` against: local-to-local copy, local-to-MinIO
+sync (including its automatic dry-run pass), bad arguments, and bad
+credentials. Bad arguments and bad credentials both correctly print an
+error and exit 1 without leaving anything half-done. The script sets
+`RCLONE_CONFIG=/dev/null` itself, so it won't pick up a stray config
+file even if one exists on the machine running it.

@@ -91,3 +91,15 @@ rclone check source-dir dest-dir               # verify after
 `--dry-run` costs nothing and shows exactly what would be copied and
 deleted. `check` just compares — it never changes anything, so it's
 safe to run any time you want to confirm two trees actually match.
+
+## 6. Automation
+
+```bash
+./transfer.sh copy ./source-dir ./dest-dir
+./transfer.sh sync ./source-dir :s3:testpress-bucket
+```
+
+Wraps the copy/sync commands above with logging, retries, and a
+`--dry-run` safety pass whenever the mode is `sync`. Exits non-zero on
+failure. Doesn't read or write an rclone config file — set the
+`RCLONE_S3_*` env vars before calling it if the destination is S3.
