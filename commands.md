@@ -79,3 +79,15 @@ rclone copy source-dir/videos/big-file.bin :s3:testpress-bucket/videos <s3 flags
 To test an interruption: started a copy of 2 small files + a 1GB file
 with `--transfers=1`, killed the rclone process a few seconds in, then
 ran the exact same command again.
+
+## 5. Sync safety
+
+```bash
+rclone sync source-dir dest-dir --dry-run -v   # always run this first
+rclone sync source-dir dest-dir -v             # then the real sync
+rclone check source-dir dest-dir               # verify after
+```
+
+`--dry-run` costs nothing and shows exactly what would be copied and
+deleted. `check` just compares — it never changes anything, so it's
+safe to run any time you want to confirm two trees actually match.

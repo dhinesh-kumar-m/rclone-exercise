@@ -76,3 +76,11 @@ Failed to copy: SignatureDoesNotMatch...
 ```
 `--retries=3` (the default) retried the whole operation 3 times
 before giving up and returning a non-zero exit code.
+
+## Sync safety
+
+Covered the main behaviour under "Basic operations" above — the
+short version is `sync` deletes, `copy` doesn't. The risk is direction:
+`rclone sync A B` makes B match A, so swapping the arguments by
+mistake deletes things from the copy you meant to keep. Always
+`--dry-run` a sync before running it for real.
