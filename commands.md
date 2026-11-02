@@ -18,3 +18,18 @@ rclone check source-dir dest-dir             # compare two trees, no transfer
 `copy` only adds or updates files at the destination. `sync` also deletes
 anything at the destination that isn't present in the source — always
 run it with `--dry-run` first to see what it's about to delete.
+
+## 2. S3-compatible storage (MinIO)
+
+Same commands as above, just pointing at a bucket instead of a folder.
+`<s3 flags>` is the block of `--s3-*` flags from section 3 below.
+
+```bash
+rclone mkdir :s3:testpress-bucket <s3 flags>                     # create bucket
+rclone copy source-dir :s3:testpress-bucket <s3 flags> -P        # upload
+rclone copy :s3:testpress-bucket/docs downloaded <s3 flags> -P   # download
+rclone lsl :s3:testpress-bucket <s3 flags>                       # list objects
+rclone copy :s3:testpress-bucket/docs :s3:testpress-bucket-2/docs <s3 flags> -vv  # bucket to bucket
+rclone delete :s3:testpress-bucket-2/docs/sample.pdf <s3 flags>  # delete one object
+rclone purge :s3:testpress-bucket-2 <s3 flags>                   # delete bucket + everything in it
+```

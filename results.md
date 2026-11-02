@@ -17,3 +17,12 @@ touching anything. Running it for real did exactly that, and
 files one by one since the destination folder already existed. End
 result was the same either way — source ends up empty, destination has
 the file.
+
+## S3-compatible storage
+
+Created two buckets, uploaded into one, downloaded a subfolder back
+out, then copied files from bucket to bucket. That last step logged
+`Copied (server-side copy)` for every file — MinIO copied the objects
+directly between buckets without the data passing through my machine.
+`delete` removed a single object; `purge` wiped a bucket and every
+object in it in one go (no undo, so double-check the bucket name).
