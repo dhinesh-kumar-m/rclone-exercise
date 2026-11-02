@@ -33,3 +33,32 @@ rclone copy :s3:testpress-bucket/docs :s3:testpress-bucket-2/docs <s3 flags> -vv
 rclone delete :s3:testpress-bucket-2/docs/sample.pdf <s3 flags>  # delete one object
 rclone purge :s3:testpress-bucket-2 <s3 flags>                   # delete bucket + everything in it
 ```
+
+## 3. Config-free execution (no rclone.conf)
+
+Three ways to pass S3 config without writing a config file. Used
+`RCLONE_CONFIG=/dev/null` throughout to make sure nothing was read from
+or written to a real config.
+
+**a) On-the-fly connection string** — avoid this one, see results.md.
+```bash
+rclone lsd ":s3,provider=Minio,env_auth=false,access_key_id=minioadmin,secret_access_key=minioadmin123,endpoint=http://localhost:9000:testpress-bucket"
+```
+
+**b) Command-line flags** — this is what `<s3 flags>` means above.
+```bash
+--s3-provider=Minio --s3-env-auth=false \
+--s3-access-key-id=minioadmin --s3-secret-access-key=minioadmin123 \
+--s3-endpoint=http://localhost:9000
+```
+
+**c) Environment variables** — same options, as env vars instead:
+```bash
+export RCLONE_S3_PROVIDER=Minio
+export RCLONE_S3_ENV_AUTH=false
+export RCLONE_S3_ACCESS_KEY_ID=minioadmin
+export RCLONE_S3_SECRET_ACCESS_KEY=minioadmin123
+export RCLONE_S3_ENDPOINT=http://localhost:9000
+
+rclone mkdir :s3:testpress-bucket
+```
