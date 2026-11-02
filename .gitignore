@@ -1,0 +1,9 @@
+source-dir/
+dest-dir/
+test-dest/
+move-src/
+move-dst/
+downloaded/
+reliability-test/
+logs/
+*.log
