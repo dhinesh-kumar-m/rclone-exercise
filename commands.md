@@ -62,3 +62,20 @@ export RCLONE_S3_ENDPOINT=http://localhost:9000
 
 rclone mkdir :s3:testpress-bucket
 ```
+
+## 4. Transfer reliability
+
+```bash
+rclone copy source-dir/videos/big-file.bin :s3:testpress-bucket/videos <s3 flags> \
+  --transfers=4 --bwlimit=50M --stats=2s -P
+```
+
+- `--transfers` — how many files move in parallel.
+- `--bwlimit` — hard cap on bandwidth, e.g. `50M` = 50 MiB/s.
+- `--stats` — how often to print a progress summary.
+- `--retries` / `--low-level-retries` — how many times to retry a failed
+  file / a failed HTTP request before giving up.
+
+To test an interruption: started a copy of 2 small files + a 1GB file
+with `--transfers=1`, killed the rclone process a few seconds in, then
+ran the exact same command again.

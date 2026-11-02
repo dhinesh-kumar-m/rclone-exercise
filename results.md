@@ -48,3 +48,31 @@ already built to inject env vars into a process, so the actual rclone
 command stays credential-free and safe to put in a script or repo.
 CLI flags work too but put the secret in the command line itself,
 which can leak into `ps aux` or shell history.
+
+## Transfer reliability
+
+Uploaded a 1GB file with `--bwlimit=50M` — it finished in ~22s, with
+the live transfer speed settling right around 46-50 MiB/s, matching
+the cap.
+
+For the interruption test: killed rclone mid-upload of a 1GB file,
+about 6% in. Checked the bucket right after — the two small files that
+had already finished were there, but the big file wasn't in the
+bucket at all. S3 multipart uploads only become a real object once
+every part is acknowledged, so a half-finished upload just doesn't
+show up as an object.
+
+Running the same command again: the two small files were skipped
+(already matched, no re-transfer), and the big file re-uploaded from
+0% — there's no cross-run resume for a single file, it just restarts.
+`rclone check` afterward confirmed everything matched.
+
+Also hit this by accident while testing a bad password:
+```
+Attempt 1/3 failed with 1 errors and: SignatureDoesNotMatch...
+Attempt 2/3 failed ...
+Attempt 3/3 failed ...
+Failed to copy: SignatureDoesNotMatch...
+```
+`--retries=3` (the default) retried the whole operation 3 times
+before giving up and returning a non-zero exit code.
